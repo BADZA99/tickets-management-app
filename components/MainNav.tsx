@@ -1,21 +1,12 @@
 import Link from 'next/link'
 import React from 'react'
 import ToggleMode from './ToggleMode';
+import MainNavLinks from './MainNav-links';
 
 const MainNav = () => {
   return (
     <div className="flex justify-between">
-      <div className="flex justify-between gap-2">
-        <Link href="/" className="text-xl font-bold">
-          dashboard
-        </Link>
-        <Link href="/tickets" className="text-xl ">
-          Tickets
-        </Link>
-        <Link href="/users" className="text-xl ">
-          Users
-        </Link>
-      </div>
+      <MainNavLinks />
       <div className="flex items-center gap-2">
         <Link href="/" className="text-xl font-bold">
           Logout
