@@ -1,4 +1,4 @@
-
+import TicketStatusBadge from '@/components/TicketStatusBadge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {Ticket} from '@prisma/client';
 
@@ -8,7 +8,7 @@ interface Props {
 
 const DataTable = ({tickets}:Props) => {
 
-    console.log(tickets);
+    // console.log(tickets);
   return (
     <div className='w-full mt-5 '>
     <div className='rounded-md sm:border'>
@@ -16,7 +16,9 @@ const DataTable = ({tickets}:Props) => {
         <TableHeader>
           <TableRow>
             <TableHead>title</TableHead>
-            <TableHead>status</TableHead>
+            <div className="flex justify-center">
+              <TableHead>status</TableHead>
+            </div>
             <TableHead>priority</TableHead>
             <TableHead>created at</TableHead>
           </TableRow>
@@ -26,9 +28,18 @@ const DataTable = ({tickets}:Props) => {
           {tickets ? tickets.map((ticket) => (
             <TableRow key={ticket.id} data-href='/'>
               <TableCell>{ticket.title}</TableCell>
-              <TableCell>{ticket.status}</TableCell>
+              <div className="flex justify-center">
+                <TableCell><TicketStatusBadge status={ticket.status}/></TableCell>
+              </div>
               <TableCell>{ticket.priority}</TableCell>
-              <TableCell>{new Date(ticket.createdAt).toLocaleDateString()}</TableCell>
+              <TableCell>{new Date(ticket.createdAt).toLocaleDateString('en-US',{
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+              })}</TableCell>
             </TableRow>
           )) : (
             <div>no tickets</div>
