@@ -3,6 +3,7 @@ import {prisma} from "../../prisma/prisma";
 import DataTable from './DataTable';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
+import Pagination from '@/components/Pagination';
 
 const Tickets =async () => {
   const tickets = await prisma.ticket.findMany();
@@ -15,6 +16,12 @@ const Tickets =async () => {
       >new ticket</Link>
       
       <DataTable tickets={tickets} />
+      <Pagination 
+        itemCount={22}
+        pageSize={10}
+        currentPage={1}
+        // onPageChange={(page) => console.log('Page changed to:', page)}
+       />
     </div>
   )
 }
