@@ -22,13 +22,35 @@ enum Priority {
   MEDIUM
   HIGH
 }
+
 // model ticket 
 model Ticket {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(255)
-  description String   @db.Text
-  status      Status   @default(OPEN)
-  priority    Priority @default(MEDIUM)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               Int      @id @default(autoincrement())
+  title            String   @db.VarChar(255)
+  description      String   @db.Text
+  status           Status   @default(OPEN)
+  priority         Priority @default(MEDIUM)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  assignedToUserId Int?
+  assignedTo       User?    @relation(fields: [assignedToUserId], references: [id])
 }
+
+// model user
+model User {
+  id              Int      @id @default(autoincrement())
+  email           String   @unique @db.VarChar(255)
+  password        String   @db.VarChar(255)
+  role            String   @default("USER")
+  assignedTickets Ticket[]
+}
+
+enum Role {
+  USER //CREATE TICKET
+  TECH // ASSIGN TICKET
+  ADMIN // ADMINISTRATOR
+}
+
+
+//npx prisma migrate dev pour créer la base de données
+//npx prisma generate pour générer le client Prisma
