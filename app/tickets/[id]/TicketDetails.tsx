@@ -1,24 +1,78 @@
 import { Ticket } from '@prisma/client'
 import React from 'react'
 
+import {
+  Card,
+  // CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import TicketStatusBadge from '@/components/TicketStatusBadge';
+
+import TicketPriority from '@/components/TicketPriority';
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/button';
+
 interface TicketDetailsProps {
   ticket: Ticket
 
 }
 
 
+
 const TicketDetails = ({ ticket }: TicketDetailsProps) => {
-  return <div>
-    <h1 className='text-2xl font-bold mb-4'>Ticket Details</h1>
-    <div className='p-6 rounded-lg shadow-md'>
-      <p><strong>ID:</strong> {ticket.id}</p>
-      <p><strong>Title:</strong> {ticket.title}</p>
-      <p><strong>Description:</strong> {ticket.description}</p>
-      <p><strong>Status:</strong> {ticket.status}</p>
-      <p><strong>Created At:</strong> {new Date(ticket.createdAt).toLocaleString()}</p>
-      <p><strong>Updated At:</strong> {new Date(ticket.updatedAt).toLocaleString()}</p>
+  return (
+    <div className="lg:grid lg:grid-cols-4 ">
+      <Card className="mx-4 mb-4 lg:col-span-3 lg:mr-4">
+        <CardHeader>
+          <div className="flex justify-between">
+            <TicketStatusBadge status={ticket.status} />
+            <TicketPriority priority={ticket.priority} />
+          </div>
+          <CardTitle>{ticket.title}</CardTitle>
+          <CardDescription>
+            {" "}
+            Created at{" "}
+            {new Date(ticket.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>{ticket.description}</CardContent>
+        <CardFooter>
+            Updated at{" "}
+          {new Date(ticket.updatedAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })}
+        </CardFooter>
+      </Card>
+      <div className="mx-4 flex lg:flex-col lg:mx-0 gap-2 ">
+        <Link
+          href={`/tickets/edit/${ticket.id}`}
+            className={buttonVariants({
+                 variant: 'default'})}
+        >edit ticket</Link>
+        <Link
+          href={`/tickets/edit/${ticket.id}`}
+            className={buttonVariants({
+                 variant: 'default'})}
+        >edit ticket</Link>
+      </div>
     </div>
-  </div>;
+  );
 };
 
 export default TicketDetails

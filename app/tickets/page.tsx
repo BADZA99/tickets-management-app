@@ -13,6 +13,7 @@ const Tickets =async () => {
       className={buttonVariants({
         variant: 'default'})}
       >new ticket</Link>
+      
       <DataTable tickets={tickets} />
     </div>
   )
