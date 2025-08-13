@@ -15,6 +15,7 @@ import TicketPriority from '@/components/TicketPriority';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
+import DeleteButtom from './DeleteButtom';
 
 interface TicketDetailsProps {
   ticket: Ticket
@@ -67,11 +68,7 @@ const TicketDetails = ({ ticket }: TicketDetailsProps) => {
             className={buttonVariants({
                  variant: 'default'})}
         >edit ticket</Link>
-        <Link
-          href={`/tickets/edit/${ticket.id}`}
-            className={buttonVariants({
-                 variant: 'default'})}
-        >delete ticket</Link>
+        <DeleteButtom ticketId={ticket.id} />
       </div>
     </div>
   );
