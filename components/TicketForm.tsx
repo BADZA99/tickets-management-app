@@ -30,14 +30,19 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Ticket } from "@prisma/client";
 
 // Type du formulaire basé sur le schéma Zod
 type TicketFormData = z.infer<typeof ticketSchema>;
 
-const TicketForm = () => {
-const [isSubmitting, setIsSubmitting] = useState(false);
-const [error, setError] = useState("");
-const router = useRouter();
+interface TicketFormProps {
+  ticket?: Ticket; // Optionnel pour l'édition de ticket
+}
+
+const TicketForm = ({ ticket }: TicketFormProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   // useForm prend en compte le type TicketFormData et utilise zodResolver pour la validation
   const form = useForm<TicketFormData>({
@@ -48,18 +53,22 @@ const router = useRouter();
   async function onSubmit(values: z.infer<typeof ticketSchema>) {
     try {
       setIsSubmitting(true);
-      setError(""); 
-
-      await axios.post("/api/tickets", values);
+      setError("");
+      // si on a un ticket en props
+      if (ticket) {
+        await axios.patch(`/api/tickets/${ticket.id}`, values);
+      } else {
+        await axios.post("/api/tickets", values);
+      }
 
       setIsSubmitting(false);
-      router.push("/tickets"); 
+      router.push("/tickets");
       router.refresh(); // Rafraîchit la page pour afficher le nouveau ticket
-      
     } catch (error) {
-      setError("An error occurred while submitting the form. Please try again.");
+      setError(
+        "An error occurred while submitting the form. Please try again."
+      );
       setIsSubmitting(false);
-      
     }
   }
 
@@ -73,7 +82,8 @@ const router = useRouter();
           {/* FormField est utilisé pour les champs de formulaire standards */}
           <FormField
             control={form.control} // Contrôle du champ par react-hook-form
-            name="title" 
+            defaultValue={ticket ? ticket.title : ""}
+            name="title"
             render={(
               { field } // Rendu personnalisé du champ avec les props de react-hook-form
             ) => (
@@ -92,7 +102,8 @@ const router = useRouter();
           {/* Controller est utilisé pour les composants de formulaire personnalisés qui ne sont pas natifs */}
           {/* SimpleMDE est un éditeur markdown qui nécessite une intégration spéciale */}
           <Controller
-            name="description" // Nom du champ
+            name="description"
+            defaultValue={ticket ? ticket.description : ""}
             control={form.control} // Contrôle du formulaire
             render={(
               { field } // Rendu personnalisé avec les props du champ
@@ -108,6 +119,7 @@ const router = useRouter();
             <FormField
               control={form.control}
               name="status"
+              defaultValue={ticket ? ticket.status : "OPEN"}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
@@ -117,7 +129,10 @@ const router = useRouter();
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue
+                          placeholder="Select status"
+                          defaultValue={ticket ? ticket.status : ""}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -136,6 +151,7 @@ const router = useRouter();
             <FormField
               control={form.control}
               name="priority"
+              defaultValue={ticket ? ticket.priority : ""}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Priority</FormLabel>
@@ -145,7 +161,10 @@ const router = useRouter();
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select priority" />
+                        <SelectValue
+                          placeholder="Select priority"
+                          defaultValue={ticket ? ticket.priority : ""}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -160,12 +179,8 @@ const router = useRouter();
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className=""
-          >
-            Create Ticket
+          <Button type="submit" disabled={isSubmitting} className="">
+            {ticket ? "Update Ticket" : "Create Ticket"}
           </Button>
         </form>
       </Form>
