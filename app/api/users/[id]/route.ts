@@ -28,11 +28,11 @@ export async function PATCH(request: NextRequest,{params}:Props) {
         );
     }
 
-    if (body.password) {
+    if (body?.password && body.password !== '') {
         const hashPassword = await bcrypt.hash(body.password, 10);
         body.password = hashPassword;
     } else {
-        body.password = existingUser.password; // Keep the existing password if not provided
+        delete body.password; // Remove password if not provided
     }
 
     if (existingUser.username !== body.username) {
