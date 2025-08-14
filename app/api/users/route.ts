@@ -3,40 +3,48 @@ import { prisma } from "@/prisma/prisma";
 import { userSchema } from "@/ValidationSchemas/user";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
+import options from "../auth/[...nextauth]/options";
 
 export async function POST(request: NextRequest) {
-    const body = await request.json();
-    const validation = userSchema.safeParse(body);
-    if (!validation.success) {
-        return NextResponse.json(validation.error.format(), {
-            status: 400,
-        });
-    }
+  const session = await getServerSession(options);
 
-    const duplicateUser = await prisma.user.findUnique({
-        where: {
-            username: body.username,
-        },
+  if (!session) {
+    return NextResponse.json({ error: "Not Unauthorized" }, { status: 401 });
+  }
+  console.log("session", session);
+
+  const body = await request.json();
+  const validation = userSchema.safeParse(body);
+  if (!validation.success) {
+    return NextResponse.json(validation.error.format(), {
+      status: 400,
     });
+  }
 
-    if (duplicateUser) {
-        return NextResponse.json(
-            { message: "Username already exists" },
-            { status: 400 }
-        );
-    }
+  const duplicateUser = await prisma.user.findUnique({
+    where: {
+      username: body.username,
+    },
+  });
 
-    const hashPassword = await bcrypt.hash(body.password, 10);
-    body.password = hashPassword;
-    
+  if (duplicateUser) {
+    return NextResponse.json(
+      { message: "Username already exists" },
+      { status: 400 }
+    );
+  }
 
-    const newUser = await prisma.user.create({
-        data: {
-           ...body
-        },
-    });
+  const hashPassword = await bcrypt.hash(body.password, 10);
+  body.password = hashPassword;
 
-    return NextResponse.json(newUser, {
-        status: 201,
-    });
+  const newUser = await prisma.user.create({
+    data: {
+      ...body,
+    },
+  });
+
+  return NextResponse.json(newUser, {
+    status: 201,
+  });
 }
