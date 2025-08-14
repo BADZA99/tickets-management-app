@@ -98,3 +98,5 @@ const Component = () => {
 - Les tokens JWT sont signés
 - Les rôles sont vérifiés côté serveur
 - Les sessions sont gérées de manière sécurisée par NextAuth
+
+LOGin FAILED ?? GENERER UN SECRET POUR NEXTAUTH_SECRET EN FAISANT openssl rand -base64 32 SUR LE TERMINALE BASH LE COLLER DANS UN FICHIER .ENV.LOCAL 
