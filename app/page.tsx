@@ -32,7 +32,7 @@ const Dashboard = async() => {
       id: true,
     },
   })
-  console.log(groupTicket);
+  // console.log(groupTicket);
 
   const data = groupTicket?.map((item)=>{
     return {
